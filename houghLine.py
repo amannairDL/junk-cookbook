@@ -1,0 +1,29 @@
+import numpy as np
+import cv2
+import math
+from scipy import ndimage
+
+
+file_path = r"C:\Users\Aman.Sivaprasad\OneDrive - EY\Desktop\labcorp\results\testingdata\dob\orentation\clock_90.jpg"
+
+img_before = cv2.imread(file_path2)
+
+
+img_gray = cv2.cvtColor(img_before, cv2.COLOR_BGR2GRAY)
+img_edges = cv2.Canny(img_gray, 100, 100, apertureSize=3)
+lines = cv2.HoughLinesP(img_edges, rho = 1, theta = math.pi / 360.0, threshold = 100, minLineLength=100, maxLineGap=5)
+
+angles = []
+
+for x1, y1, x2, y2 in lines[0]:
+    cv2.line(img_before, (x1, y1), (x2, y2), (255, 0, 0), 3)
+    angle = math.degrees(math.atan2(y2 - y1, x2 - x1))
+    angles.append(angle)
+
+median_angle = np.median(angles)
+img_rotated = ndimage.rotate(img_before, median_angle)
+
+print(median_angle)
+
+plt.imshow(img_rotated)
+ 
